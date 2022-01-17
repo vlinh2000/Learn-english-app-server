@@ -3,8 +3,8 @@ const lessonModel = require("../models/lesson.model");
 module.exports = {
     getAll: async (req, res) => {
         try {
-            const all = await lessonModel.find();
-            res.json({ all });
+            const lessons = await lessonModel.find();
+            res.json({ lessons });
         } catch (error) {
             res.status(500).json({ message: "Đã xảy ra lỗi", error: error.message });
         }
@@ -28,17 +28,16 @@ module.exports = {
             const lesson = await lessonModel.findOne({ name });
             if (lesson) return res.status(401).json({ message: "Bài học đã tồn tại" });
 
-            const createAt = Date.now();
-
-            console.log(req.file);
-            // const newLesson = new lessonModel({
-            //     name,
-            //     createAt,
-            //     image,
-            //     audio,
-            //     author
-            // });
-            // await newLesson.save();
+            const { audio, image } = req.files;
+            const createAt = new Date();
+            const newLesson = new lessonModel({
+                name,
+                createAt,
+                image: image[0].path,
+                audio: audio[0].path,
+                author
+            });
+            await newLesson.save();
             res.json({ message: "Thêm bài học thành công" });
         } catch (error) {
             res.status(500).json({ message: "Đã xảy ra lỗi", error: error.message });
@@ -63,10 +62,25 @@ module.exports = {
             const lesson = await lessonModel.findOne({ _id });
             if (!lesson) return res.status(404).json({ message: "Bài học không tồn tại" });
 
-            const { name, time, author } = req.body;
-            //file
+            const { name, author, time } = req.body;
+            //update listen time
 
-            // await lessonModel.deleteOne({ _id });
+            if (time) {
+                await lessonModel.updateOne({ _id }, { $inc: { time: 1 } });
+                return res.json({ message: "Tăng lượt nghe thành công" });
+            }
+
+            //
+            const { audio, image } = req.files;
+            let updateFields = {
+                name, author
+            }
+
+            updateFields = audio ? { ...updateFields, audio: audio[0].path } : updateFields;
+            updateFields = image ? { ...updateFields, image: image[0].path } : updateFields;
+
+            await lessonModel.updateOne({ _id }, { ...updateFields });
+
             res.json({ message: "Sửa bài học thành công" });
         } catch (error) {
             res.status(500).json({ message: "Đã xảy ra lỗi", error: error.message });

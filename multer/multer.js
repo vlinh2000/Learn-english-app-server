@@ -10,10 +10,12 @@ cloudinary.config({
 });
 
 const storage = new CloudinaryStorage({
-    cloudinary,
+    cloudinary: cloudinary,
     params: {
-        folder: "files_learn_english_app"
+        folder: "files_learn_english_app",
+        resource_type: 'auto',
+        allowedFormats: ['jpeg', 'png', 'jpg', 'mp3'],
     }
 })
-
-module.exports = multer({ storage });
+const upload = multer({ storage });
+module.exports = upload;
