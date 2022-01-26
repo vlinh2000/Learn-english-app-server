@@ -27,8 +27,8 @@ mongoose.connect(process.env.MONGODB_CONNECTION).then(() => {
     console.log("Connect database failt" + err);
 });
 
-app.use("/login", authRouter);
-// app.use(authMiddleware.isAuth);
+app.use("/api/login", authRouter);
+app.use(authMiddleware.isAuth);
 app.use('/api/user', userRouter);
 app.use('/api/lesson', lessonRouter);
 app.use('/api/word', wordRouter);

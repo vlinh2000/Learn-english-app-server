@@ -9,7 +9,6 @@ module.exports = {
         try {
             jwt.verify(token, process.env.JWT_SECRET, (err, decode) => {
                 if (err) throw err;
-
                 req.decode = decode;
                 next();
             });

@@ -5,12 +5,13 @@ const md5 = require("md5");
 module.exports = {
     login: async (req, res) => {
         try {
-            const { userName, pass } = req.body;
+            const { userName, passWord } = req.body;
 
             const user = await userModel.findOne({ userName });
             if (!user) return res.status(404).json({ message: "UserName không tồn tại" });
 
-            if (user.pass !== md5(pass)) return res.status(401).json({ message: "Mật khẩu không chính xác" });
+            if (user.pass !== md5(passWord)) return res.status(401).json({ message: "Mật khẩu không chính xác" });
+
 
             //tao token refesh token 
             const token = jwt.sign(

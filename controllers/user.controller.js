@@ -12,7 +12,7 @@ module.exports = {
     },
     get: async (req, res) => {
         try {
-            const { _id } = req.params;
+            let _id = req.decode._id || req.params._id
             const user = await userModel.findOne({ _id });
 
             if (!user) return res.status(404).json({ message: "Người dùng không tồn tại" });
